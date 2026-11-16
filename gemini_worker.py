@@ -270,7 +270,8 @@ Rules:
 - Prefer windows with strong hooks, conflict, surprise, outrage, emotion,
   novelty, big numbers, or a clear payoff.
 - A window may carry `viewers_clipped` / `viewer_clip_views`: the stream's own
-  live viewers clipped that stretch themselves. That is strong evidence the
+  live viewers clipped that stretch themselves, or its chat burst there (then
+  the views are the distinct chatters of the burst). That is strong evidence the
   moment lands even when the transcript looks thin (a chase, a crash, a scream),
   so weigh it up; the window still has to make sense to a cold viewer.
 

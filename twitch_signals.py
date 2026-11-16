@@ -23,6 +23,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
+import chat_signals
+
 HELIX = "https://api.twitch.tv/helix"
 TOKEN_URL = "https://id.twitch.tv/oauth2/token"
 MAX_CLIP_PAGES = 5          # 100 clips a page; Helix returns them by views
@@ -254,7 +256,9 @@ def viewer_clips_for_job(url, duration: float) -> List[dict]:
     vod_id = parse_vod_id(url)
     if not vod_id:
         return []
-    clips = fetch_viewer_clips(vod_id)
+    # Chat bursts share the viewer-clip shape (``views`` = distinct chatters in
+    # the burst), so the windows they fall in are shown and promoted the same way.
+    clips = fetch_viewer_clips(vod_id) + chat_signals.fetch_chat_moments(vod_id)
     if not clips:
         return []
     start = 0.0
@@ -264,6 +268,6 @@ def viewer_clips_for_job(url, duration: float) -> List[dict]:
         except ValueError:
             start = 0.0
     shifted = shift_clips(clips, start, float(duration or 0) or math.inf)
-    print(f"   👀 Twitch: {len(shifted)} viewer clip(s) inside this source "
+    print(f"   👀 Twitch: {len(shifted)} viewer clip(s) / chat burst(s) inside this source "
           f"({len(clips)} on the VOD).")
     return shifted

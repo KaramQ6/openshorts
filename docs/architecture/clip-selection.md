@@ -72,3 +72,24 @@ silently). Self-host `/api/process` then accepts a request without
 `X-Gemini-Key` and `/api/config.localLlm` tells the dashboard not to demand one.
 Frame-based stages (`layout_picker`, `screencast_layout`, `get_visual_clips`)
 stay on Gemini. Never wired in cloud mode: `BILLING_ENABLED` ignores it.
+
+## Crowd signals on Twitch VODs (`twitch_signals.py`, `chat_signals.py`)
+
+For a `twitch.tv/videos/<id>` source, `twitch_signals.viewer_clips_for_job`
+gathers two kinds of crowd evidence in one `{"start", "duration", "views"}`
+shape, so `window_heat` / `promote_hot_windows` / `_viewer_hint` treat them alike:
+
+- **Viewer clips** (Helix, needs `TWITCH_CLIENT_ID` / `TWITCH_CLIENT_SECRET`):
+  `views` = clip views.
+- **Chat bursts** (anonymous public GQL, no credentials; off with
+  `TWITCH_CHAT_SIGNAL=0`): `views` = distinct chatters in the 10 s bucket.
+
+Chat replay is read with `comments(contentOffsetSeconds)` only: cursor paging
+answers `IntegrityCheckFailed` without an integrity token. The VOD is sampled
+by offset, at most one page per 10 s bucket (fewer where chat is quiet), by
+`FETCH_WORKERS` chunks in parallel, capped at `MAX_PAGES`; a 13 h VOD took ~660
+pages / ~45 s. A bucket's rate is distinct chatters per covered second (bots in
+`BOT_LOGINS` ignored), a burst beats its +-5 min rolling median by 3 Poisson
+sigmas and 2x, one per minute, top 25, and the moment opens 20 s before the
+bucket because chat lags the screen. Any failure returns [] and the job runs
+as before.

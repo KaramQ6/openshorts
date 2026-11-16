@@ -2362,7 +2362,8 @@ def _viewer_hint(viewer_clips, offset, duration):
     inside = sorted(inside, key=lambda c: -c.get("views", 0))[:15]
     spans = [[round(c["start"] - offset, 1), round(c["end"] - offset, 1), c.get("views", 0)]
              for c in inside]
-    return ("\nVIEWER_CLIPS (moments the stream's live viewers clipped themselves, as "
+    return ("\nVIEWER_CLIPS (moments the stream's live viewers clipped themselves or "
+            "its chat burst on, views = clip views or distinct chatters, as "
             "[start, end, views] in seconds of THIS video): " + json.dumps(spans) +
             "\nTreat them as strong evidence a moment lands and cover the best of them, "
             "but still judge what you see and keep the time contract.\n")
