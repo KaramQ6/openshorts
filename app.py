@@ -555,6 +555,20 @@ def estimate_outcome(plan, source_minutes, remaining, processed_before):
     return {**out, "outcome": "needs_more", "partial_minutes": partial_offer(cost, remaining)}
 
 
+def _unmetered_range(source_range):
+    """Self-host spends no minutes, but a stretch the caller picked (both ends
+    given) still cuts the job to it, so a 3-hour VOD is not downloaded and
+    transcribed whole. The shape is what ``_apply_source_cut`` reads."""
+    try:
+        start, end = float(source_range[0]), float(source_range[1])
+    except (TypeError, ValueError, IndexError):
+        return None
+    if start < 0 or end - start < MIN_RANGE_SECONDS:
+        return None
+    return {"start_seconds": round(start, 3), "end_seconds": round(end, 3),
+            "processed_minutes": (end - start) / 60.0}
+
+
 async def reserve_process_minutes(request, url, input_path, job_id, max_minutes=None,
                                   source_range=None):
     """Meter a managed /api/process request.
@@ -579,7 +593,7 @@ async def reserve_process_minutes(request, url, input_path, job_id, max_minutes=
     on the operator's key for free. Only skip metering when billing is off.
     """
     if not BILLING_ENABLED:
-        return None, 2, None, None, None
+        return None, 2, None, None, _unmetered_range(source_range)
     user = await _user_from_request(request)
     if not managed_keys.has_active_entitlement(user):
         return None, 2, None, None, None  # shouldn't happen (resolve_gemini would have 402'd)

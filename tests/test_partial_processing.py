@@ -260,3 +260,15 @@ class TestFirstVideoIpFingerprint:
         assert metering.ip_fingerprint("") == ""
         assert metering.ip_fingerprint("unknown") == ""
         assert metering.ip_fingerprint(None) == ""
+
+
+class TestSelfHostRange:
+    """Self-host spends no minutes, but a stretch the caller picked still cuts the job."""
+
+    def test_a_valid_stretch_becomes_the_partial_cut(self):
+        assert app_module._unmetered_range([1230, 2430]) == {
+            "start_seconds": 1230.0, "end_seconds": 2430.0, "processed_minutes": 20.0}
+
+    @pytest.mark.parametrize("bad", [None, [], [10], ["a", "b"], [-5, 600], [100, 101]])
+    def test_anything_else_is_ignored(self, bad):
+        assert app_module._unmetered_range(bad) is None

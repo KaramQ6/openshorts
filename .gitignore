@@ -52,3 +52,7 @@ CLAUDE.local.md
 
 # Rust build output
 osrender/target/
+
+# local VOD autopilot
+vods.txt
+vod_autopilot_state.json

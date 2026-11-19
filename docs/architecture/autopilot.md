@@ -67,3 +67,17 @@ prompts on the windows that hold them (`viewers_clipped`, `viewer_moments`),
 and up to a third of the shortlist is reserved for the hottest windows
 (`promote_hot_windows`). The silent-footage vision pass gets them as a hint
 too. Everything is best effort: no credentials or any error means no signal.
+
+## Self-host: unattended Twitch VODs (`vod_autopilot.py`)
+
+The Cloud Autopilot above is not part of a self-hosted install. `vod_autopilot.py`
+is a small stand-in driven by an external scheduler: each run is one idempotent
+tick over a `vods.txt` list (one Twitch VOD link per line). It submits one VOD at
+a time to `/api/process` on the stretch where its chat burst most
+(`chat_signals` + `twitch_signals.best_stretch`), and when a job is completed it
+schedules the top `--per-vod` clips by `predicted_score` on Upload-Post through
+`/api/social/post`, at `--hours` in `--tz`. State is `vod_autopilot_state.json`
+(atomic writes); `--monthly-cap` stops posting at the Upload-Post plan's limit.
+Keys come from the process environment (`GEMINI_API_KEY`, `UPLOAD_POST_API_KEY`)
+and travel as the API's own BYOK headers. Submitting needs `--i-have-rights`,
+the same content-rights attestation as the dashboard checkbox.
