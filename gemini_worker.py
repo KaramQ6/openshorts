@@ -340,6 +340,17 @@ HOOK PLAYBOOK — pick the strongest fitting pattern for `viral_hook_text` (max 
   the number, the claim, the name. A line that could sit on any clip of this
   video ("I automated my clips with AI") is wrong. If nothing concrete can be
   named, quote the clip's strongest sentence instead of summarising the topic.
+- GAMEPLAY AND REACTION CLIPS: write the hook as a short fact about a person,
+  not a line lifted from the speech. Put the player first ("He", a name, "This
+  streamer"), say what happened in the past tense, and raise the stakes in a
+  few words (a number, a rival, the cops, an audience). Plant one question and
+  leave it open: end on "..." or hide the payoff behind "until" or "then". The
+  hook adds what the picture cannot say in two seconds; it never repeats the
+  first spoken line, and it never gives away how the moment ends. Exaggerate
+  only what the clip really shows.
+- SAFE WORDS: no profanity, slurs or insults aimed at a person or group in the
+  hook, title or descriptions, even if they are said in the clip. Do not
+  mock real people. Name the game that is really on screen, never another one.
 
 COPY RULES — ALL text fields (descriptions, title, hook) MUST be written in TRANSCRIPT_LANGUAGE ({language}):
 - Descriptions (TikTok + Instagram): 1-2 punchy sentences that tease the payoff
